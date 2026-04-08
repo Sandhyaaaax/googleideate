@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PayVest – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{--bg:#050810;--surface:rgba(18,25,45,0.8);--s2:rgba(25,35,60,0.5);--border:rgba(255,255,255,0.07);--primary:#7c3aed;--accent:#06d6a0;--warn:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--muted:#64748b;--ml:#94a3b8;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;min-height:100vh;}
+    /* Sidebar */
+    .sb{width:240px;min-height:100vh;background:rgba(8,12,25,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 0;position:fixed;top:0;left:0;z-index:100;}
+    .sb-logo{display:flex;align-items:center;gap:.6rem;padding:0 1.5rem 2rem;font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;}
+    .lb{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;}
+    .lt{background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .ni{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.5rem;color:var(--ml);text-decoration:none;font-size:.91rem;font-weight:500;transition:all .25s;border-left:3px solid transparent;}
+    .ni:hover,.ni.act{color:var(--text);background:rgba(124,58,237,.08);border-left-color:var(--primary);}
+    .ni i{font-size:1.15rem;}
+    .ns{padding:1.1rem 1.5rem .35rem;font-size:.68rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+    .sb-bot{margin-top:auto;padding:0 1.2rem;}
+    .upill{display:flex;align-items:center;gap:.7rem;padding:.8rem;background:var(--s2);border:1px solid var(--border);border-radius:13px;}
+    .av{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;flex-shrink:0;}
+    /* Main */
+    .main{margin-left:240px;flex:1;padding:1.8rem 2.2rem;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem;}
+    .topbar h1{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;}
+    .tb-r{display:flex;gap:.75rem;align-items:center;}
+    .ib{width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ml);transition:all .25s;}
+    .ib:hover{background:var(--s2);color:var(--text);}
+    .send-btn{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;padding:.55rem 1.2rem;border-radius:9px;font-weight:600;font-size:.88rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;}
+    /* Stats */
+    .srow{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.8rem;}
+    .sc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.3rem 1.4rem;position:relative;overflow:hidden;transition:all .3s;}
+    .sc:hover{transform:translateY(-4px);border-color:rgba(124,58,237,.2);}
+    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+    .sc.b::before{background:linear-gradient(90deg,#3b82f6,#60a5fa);}
+    .sc.g::before{background:linear-gradient(90deg,var(--accent),#34d399);}
+    .sc.p::before{background:linear-gradient(90deg,var(--primary),#a855f7);}
+    .sc.a::before{background:linear-gradient(90deg,var(--warn),#fcd34d);}
+    .sl{font-size:.78rem;color:var(--ml);margin-bottom:.5rem;font-weight:500;}
+    .sv{font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:.25rem;}
+    .sch{font-size:.76rem;color:var(--accent);display:flex;align-items:center;gap:.25rem;}
+    .si{position:absolute;top:1.1rem;right:1.1rem;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+    /* Charts */
+    .crow{display:grid;grid-template-columns:2fr 1fr;gap:1.1rem;margin-bottom:1.8rem;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem;}
+    .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.3rem;}
+    .ct{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;}
+    .pills{display:flex;gap:.35rem;}
+    .pill{padding:.28rem .75rem;border-radius:50px;font-size:.76rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--ml);transition:all .25s;}
+    .pill.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+    /* Bottom */
+    .brow{display:grid;grid-template-columns:1.4fr 1fr;gap:1.1rem;}
+    .txi{display:flex;align-items:center;gap:.9rem;padding:.8rem 0;border-bottom:1px solid var(--border);}
+    .txi:last-child{border:none;}
+    .txic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .txn p{font-size:.88rem;font-weight:600;margin-bottom:.15rem;}
+    .txn span{font-size:.76rem;color:var(--ml);}
+    .txam{margin-left:auto;text-align:right;}
+    .txam p{font-size:.92rem;font-weight:700;color:var(--danger);}
+    .txam span{font-size:.72rem;color:var(--accent);}
+    /* Quick */
+    .qg{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;}
+    .qb{background:var(--s2);border:1px solid var(--border);border-radius:13px;padding:.9rem;display:flex;align-items:center;gap:.7rem;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--text);}
+    .qb:hover{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.3);transform:translateY(-2px);}
+    .qi{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+    .qb p{font-size:.85rem;font-weight:600;}
+    .qb small{font-size:.72rem;color:var(--ml);}
+    /* Legend */
+    .leg{display:flex;flex-direction:column;gap:.6rem;margin-top:.9rem;}
+    .li{display:flex;align-items:center;gap:.7rem;font-size:.82rem;}
+    .ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+    .li span:last-child{margin-left:auto;font-weight:600;}
+    @media(max-width:1050px){.srow{grid-template-columns:repeat(2,1fr)}.crow,.brow{grid-template-columns:1fr}}
+    @media(max-width:700px){.sb{display:none}.main{margin-left:0;padding:1rem}}
+  </style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="lb"><i class="ri-funds-line" style="color:#fff;font-size:.95rem;"></i></div><span class="lt">PayVest</span></div>
+  <div class="ns">Main</div>
+  <a class="ni act" href="dashboard.html"><i class="ri-dashboard-3-line"></i> Dashboard</a>
+  <a class="ni" href="payments.html"><i class="ri-send-plane-line"></i> Payments</a>
+  <a class="ni" href="investments.html"><i class="ri-line-chart-line"></i> Investments</a>
+  <a class="ni" href="portfolio.html"><i class="ri-pie-chart-2-line"></i> Portfolio</a>
+  <div class="ns">Tools</div>
+  <a class="ni" href="payments.html"><i class="ri-qr-scan-2-line"></i> Scan QR</a>
+  <a class="ni" href="payments.html"><i class="ri-bill-line"></i> Bill Payments</a>
+  <a class="ni" href="#"><i class="ri-settings-3-line"></i> Settings</a>
+  <div class="sb-bot">
+    <div class="upill">
+      <div class="av">RS</div>
+      <div><p style="font-size:.86rem;font-weight:600;">Rahul Sharma</p><p style="font-size:.73rem;color:var(--ml);">rahul@payvest.in</p></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Good Morning, Rahul 👋</h1><p style="color:var(--ml);font-size:.85rem;margin-top:.15rem;">Auto-Invest is <span style="color:var(--accent);font-weight:600;">ON · 10%</span> per transaction</p></div>
+    <div class="tb-r">
+      <div class="ib"><i class="ri-notification-3-line"></i></div>
+      <a class="send-btn" href="payments.html"><i class="ri-send-plane-fill"></i> Send Money</a>
+    </div>
+  </div>
+
+  <div class="srow">
+    <div class="sc b">
+      <div class="si" style="background:rgba(59,130,246,.13);color:#3b82f6;"><i class="ri-wallet-3-line"></i></div>
+      <div class="sl">Wallet Balance</div>
+      <div class="sv">₹85,420</div>
+      <div class="sch"><i class="ri-checkbox-circle-line"></i> Available</div>
+    </div>
+    <div class="sc g">
+      <div class="si" style="background:rgba(6,214,160,.13);color:var(--accent);"><i class="ri-funds-line"></i></div>
+      <div class="sl">Portfolio Value</div>
+      <div class="sv">₹29,240</div>
+      <div class="sch"><i class="ri-arrow-up-line"></i> +18.4% returns</div>
+    </div>
+    <div class="sc p">
+      <div class="si" style="background:rgba(124,58,237,.13);color:var(--primary);"><i class="ri-money-rupee-circle-line"></i></div>
+      <div class="sl">Total Invested</div>
+      <div class="sv">₹24,680</div>
+      <div class="sch"><i class="ri-bar-chart-line"></i> 5 categories</div>
+    </div>
+    <div class="sc a">
+      <div class="si" style="background:rgba(245,158,11,.13);color:var(--warn);"><i class="ri-exchange-funds-line"></i></div>
+      <div class="sl">This Month</div>
+      <div class="sv">₹3,240</div>
+      <div class="sch"><i class="ri-arrow-up-line"></i> Auto-invested</div>
+    </div>
+  </div>
+
+  <div class="crow">
+    <div class="card">
+      <div class="ch">
+        <div class="ct">Portfolio Growth</div>
+        <div class="pills">
+          <div class="pill on" onclick="setPeriod(7,this)">7D</div>
+          <div class="pill" onclick="setPeriod(30,this)">1M</div>
+          <div class="pill" onclick="setPeriod(90,this)">3M</div>
+        </div>
+      </div>
+      <canvas id="gc" height="110"></canvas>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Allocation</div></div>
+      <canvas id="dc" height="170"></canvas>
+      <div class="leg" id="dleg"></div>
+    </div>
+  </div>
+
+  <div class="brow">
+    <div class="card">
+      <div class="ch"><div class="ct">Recent Transactions</div><a href="payments.html" style="font-size:.8rem;color:var(--accent);text-decoration:none;">View All →</a></div>
+      <div id="txList"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Quick Actions</div></div>
+      <div class="qg">
+        <a class="qb" href="payments.html"><div class="qi" style="background:rgba(59,130,246,.13);color:#3b82f6;"><i class="ri-send-plane-line"></i></div><div><p>Send UPI</p><small>Pay anyone</small></div></a>
+        <a class="qb" href="payments.html"><div class="qi" style="background:rgba(6,214,160,.13);color:var(--accent);"><i class="ri-qr-scan-2-line"></i></div><div><p>Scan QR</p><small>Quick pay</small></div></a>
+        <a class="qb" href="payments.html"><div class="qi" style="background:rgba(245,158,11,.13);color:var(--warn);"><i class="ri-bill-line"></i></div><div><p>Pay Bills</p><small>Electricity, gas</small></div></a>
+        <a class="qb" href="payments.html"><div class="qi" style="background:rgba(239,68,68,.13);color:#ef4444;"><i class="ri-smartphone-line"></i></div><div><p>Recharge</p><small>Mobile, DTH</small></div></a>
+        <a class="qb" href="investments.html"><div class="qi" style="background:rgba(124,58,237,.13);color:var(--primary);"><i class="ri-line-chart-line"></i></div><div><p>Invest</p><small>Manual invest</small></div></a>
+        <a class="qb" href="portfolio.html"><div class="qi" style="background:rgba(16,185,129,.13);color:#10b981;"><i class="ri-pie-chart-2-line"></i></div><div><p>Portfolio</p><small>Track returns</small></div></a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const DEMO_TX=[
+  {type:'upi',description:'Swiggy Order',recipient:'merchant@upi',amount:1500,invested_amount:150,timestamp:'2026-04-07T20:30:00'},
+  {type:'recharge',description:'Mobile Recharge',recipient:'Airtel',amount:299,invested_amount:29.9,timestamp:'2026-04-06T12:00:00'},
+  {type:'bill',description:'Electricity Bill',recipient:'BESCOM',amount:2300,invested_amount:230,timestamp:'2026-04-05T10:00:00'},
+  {type:'upi',description:'Split Bill',recipient:'friend@upi',amount:800,invested_amount:80,timestamp:'2026-04-04T19:00:00'},
+  {type:'upi',description:'Amazon Purchase',recipient:'amazon@upi',amount:5000,invested_amount:500,timestamp:'2026-04-02T15:00:00'},
+];
+const IC={upi:{i:'ri-send-plane-line',bg:'rgba(59,130,246,.15)',c:'#3b82f6'},recharge:{i:'ri-smartphone-line',bg:'rgba(239,68,68,.15)',c:'#ef4444'},bill:{i:'ri-bill-line',bg:'rgba(245,158,11,.15)',c:'#f59e0b'}};
+function renderTx(list){
+  document.getElementById('txList').innerHTML=list.map(t=>{
+    const ic=IC[t.type]||IC.upi;
+    const ds=new Date(t.timestamp).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    return `<div class="txi"><div class="txic" style="background:${ic.bg};color:${ic.c};"><i class="ri ${ic.i}"></i></div><div class="txn"><p>${t.description}</p><span>${t.recipient} · ${ds}</span></div><div class="txam"><p>-₹${t.amount.toLocaleString('en-IN')}</p><span>+₹${t.invested_amount} invested</span></div></div>`;
+  }).join('');
+}
+renderTx(DEMO_TX);
+
+const AC=['#3b82f6','#ef4444','#10b981','#f59e0b','#a855f7'];
+const AL=['Long-Term (20%)','Mid-Term (10%)','SIP (30%)','Mutual Funds (20%)','Flexible (20%)'];
+const AD=[4936,2468,7404,4936,4936];
+
+function genData(days){
+  const lb=[],dt=[];let v=22000;
+  for(let i=days;i>=0;i--){v+=v*(Math.random()*.04-.01);lb.push(new Date(Date.now()-i*86400000).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}));dt.push(+v.toFixed(0));}
+  return{lb,dt};
+}
+
+let gc;
+function initCharts(){
+  const {lb,dt}=genData(7);
+  const cx=document.getElementById('gc').getContext('2d');
+  const gr=cx.createLinearGradient(0,0,0,220);gr.addColorStop(0,'rgba(6,214,160,.28)');gr.addColorStop(1,'rgba(6,214,160,0)');
+  gc=new Chart(cx,{type:'line',data:{labels:lb,datasets:[{data:dt,borderColor:'#06d6a0',backgroundColor:gr,borderWidth:2.5,pointRadius:0,tension:.45,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.parsed.y.toLocaleString('en-IN')}}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10},callback:v=>'₹'+Math.round(v/1000)+'k'}}},animation:{duration:700}}});
+
+  const dc=new Chart(document.getElementById('dc').getContext('2d'),{type:'doughnut',data:{labels:AL,datasets:[{data:AD,backgroundColor:AC,borderWidth:0,hoverOffset:6}]},options:{cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': ₹'+c.parsed.toLocaleString('en-IN')}}}}});
+  document.getElementById('dleg').innerHTML=AL.map((l,i)=>`<div class="li"><div class="ld" style="background:${AC[i]};"></div><span>${l}</span><span>₹${AD[i].toLocaleString('en-IN')}</span></div>`).join('');
+}
+
+function setPeriod(d,el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');const{lb,dt}=genData(d);gc.data.labels=lb;gc.data.datasets[0].data=dt;gc.update();}
+initCharts();
+</script>
+</body>
+</html>

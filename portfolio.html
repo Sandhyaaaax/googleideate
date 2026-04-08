@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PayVest – Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{--bg:#050810;--surface:rgba(18,25,45,0.8);--s2:rgba(25,35,60,0.5);--border:rgba(255,255,255,0.07);--primary:#7c3aed;--accent:#06d6a0;--warn:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--muted:#64748b;--ml:#94a3b8;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;min-height:100vh;}
+    .sb{width:240px;min-height:100vh;background:rgba(8,12,25,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 0;position:fixed;top:0;left:0;z-index:100;}
+    .sb-logo{display:flex;align-items:center;gap:.6rem;padding:0 1.5rem 2rem;font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;}
+    .lb{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;}
+    .lt{background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .ni{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.5rem;color:var(--ml);text-decoration:none;font-size:.91rem;font-weight:500;transition:all .25s;border-left:3px solid transparent;}
+    .ni:hover,.ni.act{color:var(--text);background:rgba(124,58,237,.08);border-left-color:var(--primary);}
+    .ni i{font-size:1.15rem;}
+    .ns{padding:1.1rem 1.5rem .35rem;font-size:.68rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+    .sb-bot{margin-top:auto;padding:0 1.2rem;}
+    .upill{display:flex;align-items:center;gap:.7rem;padding:.8rem;background:var(--s2);border:1px solid var(--border);border-radius:13px;}
+    .av{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;flex-shrink:0;}
+    .main{margin-left:240px;flex:1;padding:1.8rem 2.2rem;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem;}
+    .topbar h1{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.5rem;}
+    .ct{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;}
+    .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.3rem;}
+
+    /* Hero banner */
+    .hero-banner{background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(6,214,160,.15));border:1px solid rgba(124,58,237,.25);border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.8rem;display:flex;justify-content:space-between;align-items:center;gap:2rem;position:relative;overflow:hidden;}
+    .hero-banner::before{content:'';position:absolute;top:-40%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(6,214,160,.12),transparent 70%);border-radius:50%;}
+    .hb-left h2{font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;margin-bottom:.3rem;}
+    .hb-left p{color:var(--ml);font-size:.9rem;}
+    .hb-mid{display:flex;gap:3rem;}
+    .hb-stat h4{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:.2rem;}
+    .hb-stat p{font-size:.78rem;color:var(--ml);}
+    .hb-stat .up{color:var(--accent);}
+    .hb-stat .dn{color:var(--danger);}
+    .export-btn{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text);padding:.6rem 1.2rem;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}
+    .export-btn:hover{background:rgba(255,255,255,.13);}
+
+    /* Main grid */
+    .mgrid{display:grid;grid-template-columns:1fr 1.2fr;gap:1.4rem;margin-bottom:1.8rem;}
+
+    /* Donut */
+    .donut-wrap{position:relative;width:200px;margin:0 auto 1rem;}
+    .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+    .donut-center h3{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;}
+    .donut-center p{font-size:.72rem;color:var(--ml);}
+    .legend{display:flex;flex-direction:column;gap:.55rem;margin-top:1rem;}
+    .li{display:flex;align-items:center;gap:.65rem;font-size:.83rem;cursor:pointer;padding:.25rem .4rem;border-radius:7px;transition:background .2s;}
+    .li:hover{background:rgba(255,255,255,.04);}
+    .ld{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .li-info{flex:1;}
+    .li-info span{font-size:.73rem;color:var(--ml);}
+    .li-val{text-align:right;}
+    .li-val p{font-size:.88rem;font-weight:700;}
+    .li-val span{font-size:.72rem;}
+
+    /* Returns chart */
+    .pills{display:flex;gap:.35rem;}
+    .pill{padding:.25rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--ml);transition:all .25s;}
+    .pill.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+    /* Performance grid */
+    .perf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.9rem;margin-bottom:1.8rem;}
+    .perf-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:1rem;text-align:center;transition:all .3s;cursor:pointer;}
+    .perf-card:hover{transform:translateY(-5px);border-color:rgba(124,58,237,.3);}
+    .perf-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin:0 auto .75rem;}
+    .perf-card h4{font-size:.82rem;font-weight:700;margin-bottom:.4rem;}
+    .perf-card .pval{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.2rem;}
+    .perf-card .pret{font-size:.75rem;}
+    .up{color:var(--accent);}
+    .dn{color:var(--danger);}
+    .pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:.5rem;overflow:hidden;}
+    .pbfill{height:100%;border-radius:2px;}
+
+    /* Tx history */
+    .tx-table{width:100%;border-collapse:collapse;}
+    .tx-table th{font-size:.72rem;color:var(--muted);text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+    .tx-table td{font-size:.83rem;padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.04);}
+    .tx-table tr:last-child td{border:none;}
+    .tx-table tr:hover td{background:rgba(255,255,255,.02);}
+    .type-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;border-radius:6px;font-size:.72rem;font-weight:600;}
+    .tb-upi{background:rgba(59,130,246,.12);color:#3b82f6;}
+    .tb-bill{background:rgba(245,158,11,.12);color:var(--warn);}
+    .tb-rc{background:rgba(239,68,68,.12);color:var(--danger);}
+
+    /* Wealth projection */
+    .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;}
+    .proj-stat{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center;}
+    .proj-stat h4{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem;}
+    .proj-stat p{font-size:.8rem;color:var(--ml);}
+
+    @media(max-width:1100px){.mgrid,.proj-grid{grid-template-columns:1fr}.perf-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){.sb{display:none}.main{margin-left:0;padding:1rem}.hero-banner{flex-direction:column}.hb-mid{gap:1.5rem}.perf-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="lb"><i class="ri-funds-line" style="color:#fff;font-size:.95rem;"></i></div><span class="lt">PayVest</span></div>
+  <div class="ns">Main</div>
+  <a class="ni" href="dashboard.html"><i class="ri-dashboard-3-line"></i> Dashboard</a>
+  <a class="ni" href="payments.html"><i class="ri-send-plane-line"></i> Payments</a>
+  <a class="ni" href="investments.html"><i class="ri-line-chart-line"></i> Investments</a>
+  <a class="ni act" href="portfolio.html"><i class="ri-pie-chart-2-line"></i> Portfolio</a>
+  <div class="ns">Tools</div>
+  <a class="ni" href="payments.html"><i class="ri-qr-scan-2-line"></i> Scan QR</a>
+  <a class="ni" href="payments.html"><i class="ri-bill-line"></i> Bill Payments</a>
+  <a class="ni" href="#"><i class="ri-settings-3-line"></i> Settings</a>
+  <div class="sb-bot">
+    <div class="upill">
+      <div class="av">RS</div>
+      <div><p style="font-size:.86rem;font-weight:600;">Rahul Sharma</p><p style="font-size:.73rem;color:var(--ml);">Portfolio: ₹29,240</p></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Portfolio 📊</h1><p style="color:var(--ml);font-size:.85rem;margin-top:.15rem;">Complete view of your wealth growth</p></div>
+    <button class="export-btn" onclick="alert('Portfolio report downloaded!')"><i class="ri-download-2-line"></i> Export Report</button>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hb-left">
+      <h2>₹29,240 <span class="up" style="font-size:1.2rem;">▲</span></h2>
+      <p>Total portfolio value · Started ₹24,680</p>
+    </div>
+    <div class="hb-mid">
+      <div class="hb-stat">
+        <h4 class="up">+₹4,560</h4>
+        <p>Total Profit</p>
+      </div>
+      <div class="hb-stat">
+        <h4 class="up">+18.4%</h4>
+        <p>Overall Return</p>
+      </div>
+      <div class="hb-stat">
+        <h4>47</h4>
+        <p>Transactions</p>
+      </div>
+      <div class="hb-stat">
+        <h4>5</h4>
+        <p>Categories</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE CARDS -->
+  <div class="perf-grid">
+    <div class="perf-card">
+      <div class="perf-icon" style="background:rgba(59,130,246,.13);color:#3b82f6;"><i class="ri-building-2-line"></i></div>
+      <h4>Long-Term</h4>
+      <div class="pval">₹5,920</div>
+      <div class="pret up">+19.9%</div>
+      <div class="pbar"><div class="pbfill" style="width:20%;background:#3b82f6;"></div></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-icon" style="background:rgba(239,68,68,.13);color:#ef4444;"><i class="ri-fire-line"></i></div>
+      <h4>Mid-Term</h4>
+      <div class="pval">₹2,780</div>
+      <div class="pret up">+12.6%</div>
+      <div class="pbar"><div class="pbfill" style="width:10%;background:#ef4444;"></div></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-icon" style="background:rgba(16,185,129,.13);color:#10b981;"><i class="ri-pie-chart-2-line"></i></div>
+      <h4>SIP</h4>
+      <div class="pval">₹9,120</div>
+      <div class="pret up">+23.2%</div>
+      <div class="pbar"><div class="pbfill" style="width:30%;background:#10b981;"></div></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-icon" style="background:rgba(245,158,11,.13);color:var(--warn);"><i class="ri-funds-box-line"></i></div>
+      <h4>Mutual Funds</h4>
+      <div class="pval">₹5,640</div>
+      <div class="pret up">+14.3%</div>
+      <div class="pbar"><div class="pbfill" style="width:20%;background:#f59e0b;"></div></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-icon" style="background:rgba(168,85,247,.13);color:#a855f7;"><i class="ri-settings-3-line"></i></div>
+      <h4>Flexible</h4>
+      <div class="pval">₹5,780</div>
+      <div class="pret up">+17.1%</div>
+      <div class="pbar"><div class="pbfill" style="width:20%;background:#a855f7;"></div></div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="mgrid" style="margin-bottom:1.8rem;">
+    <div class="card">
+      <div class="ch"><div class="ct">Allocation Breakdown</div></div>
+      <div class="donut-wrap">
+        <canvas id="donut"></canvas>
+        <div class="donut-center"><h3>₹29k</h3><p>Total Value</p></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <div class="ct">Portfolio vs Invested</div>
+        <div class="pills">
+          <div class="pill on" onclick="setP(30,this)">1M</div>
+          <div class="pill" onclick="setP(90,this)">3M</div>
+          <div class="pill" onclick="setP(365,this)">1Y</div>
+        </div>
+      </div>
+      <canvas id="lineChart" height="190"></canvas>
+    </div>
+  </div>
+
+  <!-- WEALTH PROJECTION -->
+  <div class="card" style="margin-bottom:1.8rem;">
+    <div class="ch"><div class="ct">Wealth Projection (if you continue investing)</div></div>
+    <div class="proj-grid" style="margin-bottom:1.2rem;">
+      <div class="proj-stat"><h4>₹1.8L</h4><p>Estimated in 1 Year</p></div>
+      <div class="proj-stat"><h4>₹8.4L</h4><p>Estimated in 3 Years</p></div>
+      <div class="proj-stat"><h4>₹24.2L</h4><p>Estimated in 7 Years</p></div>
+      <div class="proj-stat"><h4>₹62.5L</h4><p>Estimated in 15 Years</p></div>
+    </div>
+    <canvas id="projChart" height="80"></canvas>
+  </div>
+
+  <!-- TRANSACTION HISTORY -->
+  <div class="card">
+    <div class="ch">
+      <div class="ct">Investment Transaction History</div>
+      <span style="font-size:.8rem;color:var(--ml);">Showing last 10</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="tx-table">
+        <thead>
+          <tr><th>Date</th><th>Type</th><th>Paid</th><th>Invested</th><th>Long-Term</th><th>SIP</th><th>MF</th><th>Mid-Term</th><th>Flexible</th></tr>
+        </thead>
+        <tbody id="txBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+const AC=['#3b82f6','#ef4444','#10b981','#f59e0b','#a855f7'];
+const AL=['Long-Term (20%)','Mid-Term (10%)','SIP (30%)','Mutual Funds (20%)','Flexible (20%)'];
+const AV=[5920,2780,9120,5640,5780];
+const AVi=[4936,2468,7404,4936,4936];
+
+// Donut
+const dctx=document.getElementById('donut').getContext('2d');
+new Chart(dctx,{type:'doughnut',data:{labels:AL,datasets:[{data:AV,backgroundColor:AC,borderWidth:0,hoverOffset:8}]},options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.parsed.toLocaleString('en-IN')}}}}});
+
+// Legend
+document.getElementById('legend').innerHTML=AL.map((l,i)=>{
+  const ret=((AV[i]-AVi[i])/AVi[i]*100).toFixed(1);
+  const isUp=ret>=0;
+  return `<div class="li"><div class="ld" style="background:${AC[i]};"></div><div class="li-info"><p style="font-size:.83rem;font-weight:600;">${l}</p><span>Inv: ₹${AVi[i].toLocaleString('en-IN')}</span></div><div class="li-val"><p>₹${AV[i].toLocaleString('en-IN')}</p><span style="color:${isUp?'var(--accent)':'var(--danger)'};">${isUp?'+':''}${ret}%</span></div></div>`;
+}).join('');
+
+// Line chart
+let lineChart;
+function genLine(days){
+  const lb=[],d1=[],d2=[];let v=20000,inv=20000;
+  for(let i=days;i>=0;i--){
+    v+=v*(Math.random()*.05-.015);inv+=300;
+    lb.push(new Date(Date.now()-i*86400000).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}));
+    d1.push(+v.toFixed(0));d2.push(+inv.toFixed(0));
+  }
+  return{lb,d1,d2};
+}
+function initLine(){
+  const{lb,d1,d2}=genLine(30);
+  const cx=document.getElementById('lineChart').getContext('2d');
+  const g1=cx.createLinearGradient(0,0,0,220);g1.addColorStop(0,'rgba(6,214,160,.25)');g1.addColorStop(1,'rgba(6,214,160,0)');
+  lineChart=new Chart(cx,{type:'line',data:{labels:lb,datasets:[
+    {label:'Portfolio Value',data:d1,borderColor:'#06d6a0',backgroundColor:g1,borderWidth:2.5,pointRadius:0,tension:.45,fill:true},
+    {label:'Invested Amount',data:d2,borderColor:'#7c3aed',borderWidth:1.5,pointRadius:0,tension:.45,fill:false,borderDash:[5,4]},
+  ]},options:{plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}},tooltip:{callbacks:{label:c=>'₹'+c.parsed.y.toLocaleString('en-IN')}}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10},maxTicksLimit:7}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10},callback:v=>'₹'+Math.round(v/1000)+'k'}}}}});
+}
+function setP(d,el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');const{lb,d1,d2}=genLine(d);lineChart.data.labels=lb;lineChart.data.datasets[0].data=d1;lineChart.data.datasets[1].data=d2;lineChart.update();}
+
+// Projection chart
+function initProj(){
+  const lb=['Now','1Y','2Y','3Y','5Y','7Y','10Y','15Y'];
+  const d=[29240,180000,320000,840000,1500000,2420000,3800000,6250000];
+  const cx=document.getElementById('projChart').getContext('2d');
+  const g=cx.createLinearGradient(0,0,0,120);g.addColorStop(0,'rgba(124,58,237,.25)');g.addColorStop(1,'rgba(124,58,237,0)');
+  new Chart(cx,{type:'line',data:{labels:lb,datasets:[{data:d,borderColor:'#a855f7',backgroundColor:g,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#a855f7',tension:.4,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const v=c.parsed.y;return v>=100000?'₹'+Math.round(v/100000)+'L':'₹'+v.toLocaleString('en-IN');}}}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:9},callback:v=>v>=100000?'₹'+Math.round(v/100000)+'L':'₹'+Math.round(v/1000)+'k'}}}}});
+}
+
+// Tx table
+const TYPES={upi:'tb-upi',bill:'tb-bill',recharge:'tb-rc'};
+const DEMO=[
+  {date:'08 Apr',type:'upi',paid:1500,inv:150},
+  {date:'06 Apr',type:'recharge',paid:299,inv:29.9},
+  {date:'05 Apr',type:'bill',paid:2300,inv:230},
+  {date:'04 Apr',type:'upi',paid:800,inv:80},
+  {date:'02 Apr',type:'upi',paid:5000,inv:500},
+  {date:'31 Mar',type:'bill',paid:999,inv:99.9},
+  {date:'28 Mar',type:'bill',paid:12500,inv:1250},
+  {date:'25 Mar',type:'upi',paid:3200,inv:320},
+  {date:'20 Mar',type:'recharge',paid:599,inv:59.9},
+  {date:'15 Mar',type:'upi',paid:450,inv:45},
+];
+document.getElementById('txBody').innerHTML=DEMO.map(t=>`
+  <tr>
+    <td>${t.date}</td>
+    <td><span class="type-badge ${TYPES[t.type]||'tb-upi'}">${t.type.toUpperCase()}</span></td>
+    <td>₹${t.paid.toLocaleString('en-IN')}</td>
+    <td style="color:var(--accent);font-weight:600;">₹${t.inv}</td>
+    <td>₹${(t.inv*.20).toFixed(2)}</td>
+    <td>₹${(t.inv*.30).toFixed(2)}</td>
+    <td>₹${(t.inv*.20).toFixed(2)}</td>
+    <td>₹${(t.inv*.10).toFixed(2)}</td>
+    <td>₹${(t.inv*.20).toFixed(2)}</td>
+  </tr>
+`).join('');
+
+initLine();initProj();
+</script>
+</body>
+</html>
